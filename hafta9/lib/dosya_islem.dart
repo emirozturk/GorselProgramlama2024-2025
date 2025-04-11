@@ -7,6 +7,9 @@ class DosyaIslem {
   static Future<List<Kayit>> oku() async {
     var dosya = File("/Users/emirozturk/Desktop/kayit.json");
     var okunan = await dosya.readAsString();
+    if(okunan == ""){
+      return [];
+    }
     List<dynamic> jsonListe = jsonDecode(okunan);
     var kayitListesi = jsonListe.map((e) => Kayit.fromJson(e)).toList();
     return kayitListesi;
