@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:proje_frontend/helpers/request.dart';
+import 'package:proje_frontend/models/response.dart';
+import 'package:proje_frontend/models/user.dart';
 import 'package:proje_frontend/widgets/main_layout.dart';
 
 class LoginPage extends StatefulWidget {
@@ -7,11 +10,30 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+
   login() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => MainLayout(),),
-    );
+    var username = usernameController.text;
+    var password = passwordController.text;
+    Request.postWithoutToken(
+      "auth/login",
+      User(username: username, password: password),
+    ).then((Response response) {
+      if (response.isSuccess) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainLayout()),
+        );
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -29,12 +51,14 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
                     child: TextField(
+                      controller: usernameController,
                       decoration: InputDecoration(hintText: "Kullanıcı Adı"),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
                     child: TextField(
+                      controller: passwordController,
                       decoration: InputDecoration(hintText: "Şifre"),
                     ),
                   ),
